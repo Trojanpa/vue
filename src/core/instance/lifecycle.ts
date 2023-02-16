@@ -173,6 +173,7 @@ export function mountComponent(
       }
     }
   }
+  // 渲染之前调用 beforeMount 生命周期
   callHook(vm, 'beforeMount')
 
   let updateComponent
@@ -195,6 +196,7 @@ export function mountComponent(
       measure(`vue ${name} patch`, startTag, endTag)
     }
   } else {
+    // 创建一个更新渲染函数 （ 用来得到 Vnode 渲染真实 dom ）
     updateComponent = () => {
       vm._update(vm._render(), hydrating)
     }
@@ -216,6 +218,7 @@ export function mountComponent(
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
+  // 生成一个渲染 watcher 每次页面依赖的数据更新后会调用 updateComponent 进行渲染
   new Watcher(
     vm,
     updateComponent,
@@ -237,6 +240,7 @@ export function mountComponent(
   // mounted is called for render-created child components in its inserted hook
   if (vm.$vnode == null) {
     vm._isMounted = true
+    // 渲染真实 dom 结束后调用 mounted 生命周期
     callHook(vm, 'mounted')
   }
   return vm

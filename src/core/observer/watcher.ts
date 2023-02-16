@@ -110,6 +110,7 @@ export default class Watcher implements DepTarget {
     this.expression = __DEV__ ? expOrFn.toString() : ''
     // parse expression for getter
     if (isFunction(expOrFn)) {
+      // 保留 updateComponent 方法
       this.getter = expOrFn
     } else {
       this.getter = parsePath(expOrFn)
@@ -135,6 +136,7 @@ export default class Watcher implements DepTarget {
     let value
     const vm = this.vm
     try {
+      // 这里调用了 updateComponent 方法
       value = this.getter.call(vm, vm)
     } catch (e: any) {
       if (this.user) {

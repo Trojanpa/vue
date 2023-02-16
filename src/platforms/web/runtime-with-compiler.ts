@@ -35,6 +35,12 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
+  /**
+   * 编译权重：
+   * 优先看有没有render函数，如果有直接用
+   * 如果没有render函数就看有没有template模板
+   * 如果都没有就直接获取el的outerHTML作为渲染模板
+   */
   if (!options.render) {
     let template = options.template
     if (template) {
@@ -66,7 +72,7 @@ Vue.prototype.$mount = function (
       if (__DEV__ && config.performance && mark) {
         mark('compile')
       }
-
+      // 用 template 生成 render 函数
       const { render, staticRenderFns } = compileToFunctions(
         template,
         {
@@ -88,6 +94,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
+  // 调用 mount 方法开始渲染页面。
   return mount.call(this, el, hydrating)
 }
 
