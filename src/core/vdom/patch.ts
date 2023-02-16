@@ -119,9 +119,9 @@ export function createPatchFunction(backend) {
   let creatingElmInVPre = 0
 
   function createElm(
-    vnode,
+    vnode, // 虚拟dom
     insertedVnodeQueue,
-    parentElm?: any,
+    parentElm?: any, // 父节点
     refElm?: any,
     nested?: any,
     ownerArray?: any,
@@ -137,13 +137,14 @@ export function createPatchFunction(backend) {
     }
 
     vnode.isRootInsert = !nested // for transition enter check
+    // 查看元素 tag 是不是组件，如果是组件就创建组件
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
     }
 
-    const data = vnode.data
-    const children = vnode.children
-    const tag = vnode.tag
+    const data = vnode.data // 得到 data 数据
+    const children = vnode.children // 得到子元素
+    const tag = vnode.tag // 获取标签名
     if (isDef(tag)) {
       if (__DEV__) {
         if (data && data.pre) {
@@ -165,21 +166,26 @@ export function createPatchFunction(backend) {
         ? nodeOps.createElementNS(vnode.ns, tag)
         : nodeOps.createElement(tag, vnode)
       setScope(vnode)
-
+      // 如果有子节点递归渲染子节点
       createChildren(vnode, children, insertedVnodeQueue)
       if (isDef(data)) {
         invokeCreateHooks(vnode, insertedVnodeQueue)
       }
+      // 给父元素插入子元素
       insert(parentElm, vnode.elm, refElm)
 
       if (__DEV__ && data && data.pre) {
         creatingElmInVPre--
       }
     } else if (isTrue(vnode.isComment)) {
+      // 创建注释节点
       vnode.elm = nodeOps.createComment(vnode.text)
+      // 给父元素插入注释节点
       insert(parentElm, vnode.elm, refElm)
     } else {
+      // 创建文本节点
       vnode.elm = nodeOps.createTextNode(vnode.text)
+      // 给父元素插入文本节点
       insert(parentElm, vnode.elm, refElm)
     }
   }
@@ -267,6 +273,7 @@ export function createPatchFunction(backend) {
         checkDuplicateKeys(children)
       }
       for (let i = 0; i < children.length; ++i) {
+        // 渲染子节点
         createElm(
           children[i],
           insertedVnodeQueue,
@@ -810,6 +817,7 @@ export function createPatchFunction(backend) {
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true
+      // 首次渲染使用 Vnode 创建真实 dom
       createElm(vnode, insertedVnodeQueue)
     } else {
       const isRealElement = isDef(oldVnode.nodeType)
